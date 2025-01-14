@@ -1,0 +1,10 @@
+.Title {
+  text-transform: none;
+  font-size: 3.75rem;
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  line-height: 4.3125rem;
+  font-family: 'WoltHeading-Omnes', -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', 'Arimo',
+    'Open Sans', sans-serif;
+}

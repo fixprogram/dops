@@ -1,0 +1,121 @@
+.Container {
+  padding-inline: 30px;
+  grid-template-columns: 50% 15% 35%;
+  max-width: 1200px;
+  margin: 0 auto 176px;
+  padding-top: 40px;
+  display: grid;
+  box-sizing: border-box;
+}
+
+.MapWrapper {
+  height: 320px;
+  position: relative;
+}
+
+.Map {
+  position: relative;
+  touch-action: pan-x pan-y;
+  background-color: #ededee;
+  height: 100%;
+  width: 100%;
+}
+
+.Map:hover {
+  touch-action: none;
+}
+
+.Map:hover ~ div {
+  opacity: 0.3;
+}
+
+.Hero {
+  z-index: 500;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.HeroInner {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+  box-sizing: border-box;
+}
+
+.Hero:hover .HeroInner {
+  opacity: 0.3;
+}
+
+.FormLegend {
+  text-transform: none;
+  font-size: 1.75rem;
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  line-height: 2.25rem;
+  font-family: 'WoltHeading-Omnes', -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', 'Arimo',
+    'Open Sans', sans-serif;
+  color: #202125;
+}
+
+.FormList {
+  border: 2px solid #e4e4e5;
+  border-radius: 0.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.FormItem {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.FormItem:last-child hr {
+  display: none;
+}
+
+.FormSeparator {
+  border: none;
+  border-top: 1px solid #e4e4e5;
+  margin: 0;
+  height: 0;
+  margin-inline: 1rem;
+}
+
+.Calculate {
+  text-transform: none;
+  min-height: 46px;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  line-height: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', 'Arimo', 'Open Sans',
+    sans-serif;
+  background: #009de0;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  min-width: 160px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1.75rem;
+}
+
+.Calculate:hover {
+  background-color: #1fa9e4;
+}
+
+.Calculate:active:not(:disabled) {
+  background-color: #33b1e6;
+}

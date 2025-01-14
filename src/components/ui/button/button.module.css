@@ -1,0 +1,28 @@
+.Button {
+  text-transform: none;
+  min-height: 46px;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  line-height: 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', 'Arimo', 'Open Sans',
+    sans-serif;
+  background: #009de0;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  min-width: 160px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1.75rem;
+}
+
+.Button:hover {
+  background-color: #1fa9e4;
+}
+
+.Button:active:not(:disabled) {
+  background-color: #33b1e6;
+}
