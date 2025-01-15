@@ -12,7 +12,6 @@ export const GetLocationBtn: FC<{
   }
 
   function error(error: GeolocationPositionError) {
-    console.log('Unable to retrieve your location')
     onError?.(error)
   }
 

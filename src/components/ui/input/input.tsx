@@ -1,10 +1,11 @@
-import { FC, InputHTMLAttributes, ReactNode } from 'react'
+import { ChangeEvent, FC, InputHTMLAttributes, ReactNode, useEffect, useState } from 'react'
 import styles from './input.module.css'
 
 interface InputType<T> extends InputHTMLAttributes<T> {
   label: string
   prefix?: ReactNode
   postfix?: ReactNode
+  initialValue?: string
 }
 
 export const Input: FC<InputType<unknown>> = ({

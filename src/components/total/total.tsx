@@ -1,41 +1,51 @@
 import { FC } from 'react'
 import styles from './total.module.css'
+import { convertCentsToEuros } from '../../utils/convertCentsToEuros'
 
-// TODO: move to utils
-const convertValue = (value?: number, isEuro = true) => {
-  const stringValue = value.toString()
-  return isEuro
-    ? `€${stringValue.slice(0, stringValue.length - 2)}.${stringValue.slice(
-        stringValue.length - 2
-      )}`
-    : `${stringValue} m`
-}
-
-type Keys = 'total' | 'cart' | 'deliveryFee' | 'distance' | 'smallOrderSurcharge'
+type Keys = 'cart' | 'deliveryFee' | 'smallOrderSurcharge'
 
 const titles: Record<Keys, string> = {
-  total: 'Total price',
-  deliveryFee: 'Delivery fee',
-  distance: 'Delivery distance',
+  deliveryFee: 'Delivery',
   smallOrderSurcharge: 'Small order surcharge',
   cart: 'Cart value'
 }
 
-export const Total: FC<Record<Keys, number | null | undefined>> = data => {
+interface TotalPropsType {
+  data: Record<Keys, number | null | undefined>
+  distance: number | null
+}
+
+export const Total: FC<TotalPropsType> = ({ data, distance }) => {
+  const formattedData = Object.entries(data)
+    .filter(([, value]) => typeof value === 'number')
+    .map(item => ({ key: item[0] as Keys, value: item[1] as number }))
+
+  const total = formattedData.reduce((acc, { value }) => acc + value, 0)
+
   return (
     <section className={styles.Total}>
-      <span className={styles.Title}>Prices in EUR</span>
+      <span className={styles.Title}>
+        Prices in EUR
+        <span className={styles.Subtitle}>Fill the form to see total</span>
+      </span>
 
       <dl className={styles.Items}>
-        {Object.entries(data).map(([item, value]) => {
-          if (typeof value !== 'number') return
-          return (
-            <div key={item} className={styles.Item}>
-              <dt className={styles.ItemTitle}>{titles[item as Keys]}</dt>
-              <dd className={styles.ItemValue}>{convertValue(value)}</dd>
-            </div>
-          )
-        })}
+        {formattedData.map(({ key, value }) => (
+          <div key={key} className={styles.Item}>
+            <dt className={styles.ItemTitle}>
+              {titles[key]}
+              {key === 'deliveryFee' ? `(${distance} m)` : null}
+            </dt>
+            <dd className={styles.ItemValue}>{convertCentsToEuros(value)}</dd>
+          </div>
+        ))}
+
+        {total ? (
+          <div key={'total'} className={styles.Item}>
+            <dt className={styles.ItemTitle}>Total</dt>
+            <dd className={styles.ItemValue}>{convertCentsToEuros(total)}</dd>
+          </div>
+        ) : null}
       </dl>
     </section>
   )

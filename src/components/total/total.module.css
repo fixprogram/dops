@@ -20,6 +20,22 @@
   color: #202125;
 }
 
+.Subtitle {
+  font-feature-settings: 'kern';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', 'Arimo', 'Open Sans',
+    sans-serif;
+  text-transform: none;
+  color: #202125a3;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  line-height: 1.25rem;
+  display: block;
+}
+
 .Items {
   flex-direction: column;
   margin: 0;

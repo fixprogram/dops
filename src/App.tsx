@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useVenueData } from './hooks/useVenueData'
 
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -16,7 +16,7 @@ function App() {
       error: null
     },
     cart: {
-      value: 0,
+      value: undefined,
       error: null
     },
     userCoordinates: {
@@ -27,15 +27,27 @@ function App() {
   const { slug, cart, userCoordinates } = formData
 
   const { mapContainerRef, addPoint, distance } = useMap()
-  const { orderMinimumNoSurcharge, basePrice, distanceRanges, fetchData } = useVenueData(addPoint)
+  const { orderMinimumNoSurcharge, basePrice, distanceRanges, fetchData } = useVenueData(addPoint) // TODO: change on onSuccess
+
+  console.log('distance: ', distance)
 
   const getLocation = useCallback(() => {
-    fetchData(slug)
+    fetchData(slug.value.trim())
+  }, [slug, fetchData])
 
-    const coords = userCoordinates.trim().split(', ').map(Number) as [number, number]
+  useEffect(() => {
+    if (userCoordinates.value) {
+      const coords = userCoordinates.value.trim().split(', ').map(Number) as [number, number]
 
-    addPoint(coords)
-  }, [userCoordinates, addPoint, slug, fetchData])
+      addPoint(coords, true)
+    }
+  }, [userCoordinates, addPoint])
+
+  useEffect(() => {
+    if (slug.value.trim().length) {
+      getLocation()
+    }
+  }, [slug.value, getLocation])
 
   const deliveryFee = useMemo(() => {
     if (distance && distanceRanges && basePrice) {
@@ -49,32 +61,21 @@ function App() {
 
   const smallOrderSurcharge = useMemo(() => {
     if (orderMinimumNoSurcharge !== undefined) {
-      return orderMinimumNoSurcharge > Number(cart) * 100
-        ? orderMinimumNoSurcharge - Number(cart) * 100
+      return orderMinimumNoSurcharge > Number(cart.value ?? 0)
+        ? orderMinimumNoSurcharge - Number(cart.value ?? 0)
         : 0
     }
   }, [orderMinimumNoSurcharge, cart])
 
-  const total = useMemo(() => {
-    if (cart.value && cart.value > 0) {
-      if (deliveryFee && smallOrderSurcharge) {
-        return cart.value * 100 + deliveryFee + smallOrderSurcharge
-      }
-
-      return cart.value
-    }
-  }, [deliveryFee, smallOrderSurcharge, cart.value])
-
   return (
     <>
       <div className={styles.MapWrapper}>
-        <div id="map-container" className={styles.Map} />
-        {/* <div id="map-container" className={styles.Map} ref={mapContainerRef} /> */}
+        {/* <div id="map-container" className={styles.Map} /> */}
+        <div id="map" className={styles.Map} ref={mapContainerRef} />
 
         <div className={styles.Hero}>
           <div className={styles.HeroInner}>
-            {/* TODO: change to the full title */}
-            <Title>DOPC</Title>
+            <Title>Delivery Order Price Calculator</Title>
           </div>
         </div>
       </div>
@@ -83,11 +84,13 @@ function App() {
         <DetailsForm formData={formData} setFormData={setFormData} />
 
         <Total
-          cart={cart.value}
-          deliveryFee={deliveryFee}
+          data={{
+            cart:
+              cart.value && cart.value !== '.' && cart.value !== '' ? Number(cart.value) * 100 : 0,
+            deliveryFee,
+            smallOrderSurcharge
+          }}
           distance={distance}
-          smallOrderSurcharge={smallOrderSurcharge}
-          total={total}
         />
       </div>
     </>
