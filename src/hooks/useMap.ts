@@ -1,11 +1,14 @@
-import mapboxgl from 'mapbox-gl'
+import mapboxgl, { LngLatBoundsLike, LngLatLike } from 'mapbox-gl'
+import { Feature, LineString, Point } from 'geojson'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { length } from '@turf/length'
 
 import VenuePointIcon from '../assets/venue-point-icon.svg'
 import UserPointIcon from '../assets/user-point-icon.svg'
+import { useAtom } from 'jotai'
+import { distanceAtom } from '../atoms'
 
-const icons = [
+const ICONS = [
   {
     src: VenuePointIcon,
     name: 'venue-icon'
@@ -16,38 +19,70 @@ const icons = [
   }
 ]
 
-interface Feature {
-  type: string
-  geometry: { type: string; coordinates: [number, number] }
-  properties: { id: string }
-}
+const SOURCE_ID = 'source_points'
+const LAYER_ID = 'layer_points'
+
+const DEFAULT_ZOOM = 10.12
+const DEFAULT_COORDS: LngLatLike = [24.92813512, 60.17012143]
 
 export const useMap = () => {
-  const geojson = useRef<{ type: 'FeatureCollection'; features: Feature[] }>({
-    type: 'FeatureCollection',
-    features: []
-  })
+  const map = useRef<mapboxgl.Map | null>(null)
+  const [features, setFeatures] = useState<Feature<Point>[] | []>([])
+  const [, setDistance] = useAtom(distanceAtom)
 
-  const [distance, setDistance] = useState<number | null>(null)
+  const addSource = useCallback(() => {
+    map.current!.addSource(SOURCE_ID, {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features }
+    })
+  }, [features])
 
-  const fitMapToBounds = () => {
-    if (!mapRef.current || geojson.current.features.length === 0) {
+  const addImages = () => {
+    for (const { src, name } of ICONS) {
+      const customIcon = new Image(24, 24)
+      customIcon.src = src
+      customIcon.onload = () => map.current!.addImage(name, customIcon)
+    }
+  }
+
+  const addLayer = () => {
+    map.current!.addLayer({
+      id: LAYER_ID,
+      type: 'symbol',
+      source: SOURCE_ID,
+      layout: {
+        'icon-image': [
+          'match',
+          ['get', 'type'],
+          'user',
+          'user-icon',
+          'venue',
+          'venue-icon',
+          'user-icon'
+        ],
+        'icon-size': 1
+      }
+    })
+  }
+
+  const fitMapToBounds = useCallback(() => {
+    if (!map.current || features.length === 0) {
       return
     }
 
-    const coordinates = geojson.current.features
+    const coordinates = features
       .filter(feature => feature.geometry.type === 'Point')
       .map(feature => feature.geometry.coordinates)
 
     if (coordinates.length === 1) {
-      return mapRef.current.flyTo({
-        center: coordinates[0],
-        zoom: 13, // Adjust the zoom level as needed
-        duration: 1000 // Optional: Animation duration
+      return map.current.flyTo({
+        center: coordinates[0] as LngLatLike,
+        zoom: 13,
+        duration: 1000
       })
     }
 
-    const bounds = coordinates.reduce(
+    const bounds: LngLatBoundsLike = coordinates.reduce(
       (acc, coord) => {
         acc[0][0] = Math.min(acc[0][0], coord[0]) // Min longitude
         acc[0][1] = Math.min(acc[0][1], coord[1]) // Min latitude
@@ -61,110 +96,105 @@ export const useMap = () => {
       ]
     )
 
-    mapRef.current.fitBounds(bounds, {
-      padding: 50, // Add padding around the points
-      maxZoom: 15, // Optional: set a maximum zoom level
-      duration: 1000 // Optional: animation duration in milliseconds
+    map.current.fitBounds(bounds, {
+      padding: {
+        // TODO: to consts
+        left: 600,
+        right: 100,
+        top: 100,
+        bottom: 100
+      },
+      maxZoom: 15,
+      duration: 1000
     })
-  }
+  }, [features])
 
-  const addPoint = useCallback(
-    (coordinates: [number, number], isUser = false) => {
-      const point = {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates
-        },
-        properties: {
-          id: String(new Date().getTime()),
-          type: isUser ? 'user' : 'venue'
-        }
+  const addPoint = useCallback((coordinates: [number, number], type: 'user' | 'venue') => {
+    const point: Feature<Point> = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates
+      },
+      properties: {
+        id: String(new Date().getTime()),
+        type
       }
+    }
 
-      geojson.current.features = [...geojson.current.features, point]
+    setFeatures(prev => [...prev, point])
+  }, [])
 
-      if (geojson.current.features.length > 1) {
-        const linestring = {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: geojson.current.features.map(point => point.geometry.coordinates)
-          }
-        }
-
-        geojson.current.features.push(linestring)
-
-        setDistance(Math.floor(length(linestring, { units: 'meters' })))
-      }
-
-      mapRef.current.getSource('geojson').setData(geojson.current)
-
-      fitMapToBounds()
+  const removePoint = useCallback(
+    (pointType: 'user' | 'venue') => {
+      setFeatures(prev => prev.filter(point => point.properties?.type !== pointType))
+      setDistance(null)
     },
-    [geojson]
+    [setDistance]
   )
 
-  const mapRef = useRef<mapboxgl.Map | null>(null)
+  const addVenue = useCallback(
+    (coordinates: [number, number]) => {
+      addPoint(coordinates, 'venue')
+    },
+    [addPoint]
+  )
+  const addUser = useCallback(
+    (coordinates: [number, number]) => {
+      addPoint(coordinates, 'user')
+    },
+    [addPoint]
+  )
+
+  const removeVenue = useCallback(() => removePoint('venue'), [removePoint])
+  const removeUser = useCallback(() => removePoint('user'), [removePoint])
 
   useEffect(() => {
-    if (mapContainerRef.current === null) {
-      return
-    }
-    // if (mapRef.current !== null) {
-    //   return
-    // }
+    if (features.length > 1) {
+      const linestring: Feature<LineString> = {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: features.map(point => point.geometry.coordinates)
+        },
+        properties: {}
+      }
 
-    mapboxgl.accessToken =
-      'pk.eyJ1IjoiZGF2eWRvdiIsImEiOiJjbTV2MWptYWowMzFyMmlyMWF3YncxaGkxIn0.pJXvj_wJYt9J6-IPDLXorA' // TODO: .env
-    mapRef.current = new mapboxgl.Map({
+      setDistance(Math.floor(length(linestring, { units: 'meters' })))
+    }
+  }, [features, setDistance])
+
+  useEffect(() => {
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY
+    map.current = new mapboxgl.Map({
       container: 'map',
-      center: [24.92813512, 60.17012143],
-      zoom: 10.12,
+      center: DEFAULT_COORDS,
+      zoom: DEFAULT_ZOOM,
       style: 'mapbox://styles/mapbox/light-v11'
     })
 
-    mapRef.current.on('load', () => {
-      mapRef.current.addSource('geojson', {
-        type: 'geojson',
-        data: geojson.current
-      })
-      // mapRef.current.addSource('venue', {
-      //   type: 'geojson',
-      //   data: venueRef.current
-      // })
-
-      for (const { src, name } of icons) {
-        const customIcon = new Image(24, 24)
-        customIcon.src = src
-        customIcon.onload = () => mapRef.current.addImage(name, customIcon)
-      }
-
-      mapRef.current.addLayer({
-        id: 'geojson',
-        type: 'symbol',
-        source: 'geojson',
-        layout: {
-          'icon-image': [
-            'match',
-            ['get', 'type'],
-            'user',
-            'user-icon',
-            'venue',
-            'venue-icon',
-            'user-icon'
-          ],
-          'icon-size': 1
-        }
-      })
+    map.current.on('load', () => {
+      addSource()
+      addImages()
+      addLayer()
     })
 
     return () => {
-      mapRef.current?.remove()
+      map.current?.remove()
     }
   }, [])
 
-  const mapContainerRef = useRef<HTMLElement>()
+  useEffect(() => {
+    const source = map.current?.getSource(SOURCE_ID)
+    if (source?.type === 'geojson') {
+      source.setData({
+        type: 'FeatureCollection',
+        features
+      })
 
-  return { mapContainerRef, addPoint, distance }
+      fitMapToBounds()
+    }
+  }, [features, fitMapToBounds])
+
+  return { addVenue, addUser, removeVenue, removeUser }
 }
