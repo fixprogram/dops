@@ -2,12 +2,14 @@ import { FC, InputHTMLAttributes, ReactNode } from 'react'
 import cn from 'classnames'
 import styles from './FormField.module.css'
 
+// TODO
 interface FormFieldType<T> extends InputHTMLAttributes<T> {
   label: string
   prefix?: ReactNode
   postfix?: ReactNode
   initialValue?: string
   error?: string
+  testId?: string
 }
 
 export const FormField: FC<FormFieldType<unknown>> = ({
@@ -16,6 +18,7 @@ export const FormField: FC<FormFieldType<unknown>> = ({
   postfix,
   type = 'text',
   error,
+  testId,
   ...rest
 }) => {
   return (
@@ -24,6 +27,7 @@ export const FormField: FC<FormFieldType<unknown>> = ({
         {prefix && <div className={styles.Prefix}>{prefix}</div>}
 
         <input
+          data-testid={testId}
           type={type}
           className={cn(styles.Input, error ? styles.InputError : null)}
           placeholder=" "

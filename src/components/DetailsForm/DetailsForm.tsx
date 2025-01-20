@@ -12,9 +12,10 @@ export const DetailsForm = () => {
       <h3 className={styles.FormLegend}>Details</h3>
 
       <ul className={styles.FormList}>
-        {filters.map(({ value, error, prefix, postfix, onChange, label }) => (
-          <li className={styles.FormItem} key={label}>
+        {filters.map(({ key, value, error, prefix, postfix, onChange, label }) => (
+          <li className={styles.FormItem} key={key} data-test-id={`${key}Value`}>
             <FormField
+              testId={`${key}Value`}
               label={label}
               value={value}
               prefix={prefix}

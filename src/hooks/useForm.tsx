@@ -14,6 +14,7 @@ export const useForm = () => {
   return useMemo(
     () => [
       {
+        key: 'slug',
         value: slug.value,
         error: slug.error,
         label: 'Enter venue slug',
@@ -35,7 +36,7 @@ export const useForm = () => {
         }
       },
       {
-        key: 'userCoords',
+        key: 'userCoordinates',
         value: userCoordinates.value,
         error: userCoordinates.error,
         label: 'Enter user longitude and latitude',

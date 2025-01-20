@@ -95,3 +95,10 @@
   font-stretch: 100%;
   line-height: 1.5rem;
 }
+
+.ErrorIcon {
+  fill: #f93a25;
+  width: 1rem;
+  display: inline-block;
+  margin-right: 0.25rem;
+}

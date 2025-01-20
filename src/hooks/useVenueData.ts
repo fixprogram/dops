@@ -23,6 +23,7 @@ interface VenueDynamicResponseType {
   }
 }
 
+// TODO: refactor
 export const useVenueData = () => {
   const [{ value: slug }, setSlug] = useAtom(slugAtom)
   const [, setVenueData] = useAtom(venueDataAtom)
@@ -44,9 +45,13 @@ export const useVenueData = () => {
             return setSlug({ value: venueSlug, error: data[0].message })
           }
 
+          if (data[1].message) {
+            return setSlug({ value: venueSlug, error: data[1].message })
+          }
+
           const dynamicData = data[1] as VenueDynamicResponseType
           setVenueData({
-            coordinates: staticData.venue_raw.location.coordinates,
+            // coordinates: staticData.venue_raw.location.coordinates,
             orderMinimumNoSurcharge:
               dynamicData.venue_raw.delivery_specs.order_minimum_no_surcharge,
             basePrice: dynamicData.venue_raw.delivery_specs.delivery_pricing.base_price,
@@ -56,7 +61,7 @@ export const useVenueData = () => {
           setVenueCoordinates(staticData.venue_raw.location.coordinates)
           // addVenue(staticData.venue_raw.location.coordinates)
         })
-      } catch (e) {
+      } catch (event: unknown) {
         setSlug({ value: venueSlug, error: 'Cannot find a venue with this slug' })
       }
     },
