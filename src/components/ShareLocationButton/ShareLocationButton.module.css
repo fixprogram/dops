@@ -1,0 +1,52 @@
+.Button {
+  background: inherit;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+}
+
+.Icon {
+  fill: #009de0;
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
+.LoadingIcon {
+  height: 1.5rem;
+  width: 1.5rem;
+  animation: rotate 1500ms infinite linear;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.LoadingIconBgPath {
+  stroke: #009de0;
+  stroke-opacity: 0.2;
+}
+
+.LoadingIconMainPath {
+  stroke: #009de0;
+  stroke-linecap: round;
+  animation: 1.5s ease-in-out infinite mainPathKeyframes;
+}
+
+@keyframes mainPathKeyframes {
+  0% {
+    stroke-dasharray: 1 150;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 90 150;
+    stroke-dashoffset: -16px;
+  }
+  100% {
+    stroke-dasharray: 90 150;
+    stroke-dashoffset: -64px;
+  }
+}

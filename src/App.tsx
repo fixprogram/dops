@@ -1,5 +1,5 @@
 import { Total } from './components/total/total'
-import { DetailsForm } from './components/details-form/details-form'
+import { DetailsForm } from './components/DetailsForm/DetailsForm'
 import { Provider } from 'jotai'
 import { ProjectMap } from './components/map/map'
 

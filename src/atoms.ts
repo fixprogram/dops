@@ -1,5 +1,4 @@
 import { atom } from 'jotai'
-import { LngLatLike } from 'mapbox-gl'
 
 export interface DistantRangeType {
   min: number // The lower (inclusive) bound for the distance range in meters
@@ -8,16 +7,18 @@ export interface DistantRangeType {
   b: number // Multiplier to be used for calculating distance based component of the delivery fee
 }
 
-export const slugAtom = atom({ value: '', error: null })
-export const cartAtom = atom({
-  value: '',
-  error: null
-})
-export const userCoordinatesAtom = atom('')
+type InputField = {
+  value: string
+  error?: string
+}
+
+export const slugAtom = atom<InputField>({ value: '' })
+export const cartAtom = atom<InputField>({ value: '' })
+export const userCoordinatesAtom = atom<InputField>({ value: '' })
 export const distanceAtom = atom<number | null>(null)
 export const venueDataAtom = atom<{
   orderMinimumNoSurcharge: number
   basePrice: number
   distanceRanges: DistantRangeType[]
 } | null>(null)
-export const venueCoordinatesAtom = atom<LngLatLike | null>(null)
+export const venueCoordinatesAtom = atom<[number, number] | null>(null)

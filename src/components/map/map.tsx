@@ -4,24 +4,37 @@ import { Title } from '../ui/title/title'
 import styles from './map.module.css'
 import { userCoordinatesAtom, venueCoordinatesAtom } from '../../atoms'
 import { useEffect } from 'react'
+import { useDebounce } from '../../hooks/useDebounce'
+import { validateCoordinates } from '../../utils/validateCoordinates'
+import { parseCoordinates } from '../../utils/parseCoordinates'
 
 export const ProjectMap = () => {
-  // const [slug] = useAtom(slugAtom)
   const [venueCoordinates] = useAtom(venueCoordinatesAtom)
-  const [userCoordinates] = useAtom(userCoordinatesAtom)
+  const [{ value: userCoordinates }, setUserCoordinates] = useAtom(userCoordinatesAtom)
   const { addUser, addVenue, removeVenue, removeUser } = useMap()
+  const delayedUserCoordinates = useDebounce(userCoordinates)
 
-  useEffect(
-    () => (venueCoordinates ? addVenue(venueCoordinates) : removeVenue()),
-    [venueCoordinates, addVenue, removeVenue]
-  )
-  useEffect(
-    () =>
-      userCoordinates
-        ? addUser(userCoordinates.split(', ').map(Number) as [number, number])
-        : removeUser(),
-    [userCoordinates, addUser, removeUser]
-  )
+  useEffect(() => {
+    if (!venueCoordinates) return removeVenue()
+
+    addVenue(venueCoordinates)
+  }, [venueCoordinates, addVenue, removeVenue])
+
+  useEffect(() => {
+    if (!delayedUserCoordinates.length) return removeUser()
+
+    if (!validateCoordinates(delayedUserCoordinates)) {
+      removeUser()
+      setUserCoordinates({
+        value: delayedUserCoordinates,
+        error:
+          'Please enter latitude and longitude in the format: latitude, longitude (e.g., 22.2937342, 60.4475285)'
+      })
+      return
+    }
+
+    addUser(parseCoordinates(delayedUserCoordinates))
+  }, [delayedUserCoordinates, addUser, removeUser, setUserCoordinates])
 
   return (
     <div className={styles.MapWrapper}>

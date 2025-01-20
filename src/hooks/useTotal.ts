@@ -6,7 +6,7 @@ export type Keys = 'cart' | 'deliveryFee' | 'smallOrderSurcharge'
 
 export const useTotal = () => {
   const [{ value: cart }] = useAtom(cartAtom)
-  const formattedCart = cart === undefined || cart === '.' ? 0 : Number(cart) * 100
+  const formattedCart = isNaN(Number(cart)) ? 0 : Number(cart) * 100
 
   const [distance] = useAtom(distanceAtom)
   const [venueData] = useAtom(venueDataAtom)

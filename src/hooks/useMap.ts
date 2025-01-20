@@ -9,14 +9,8 @@ import { useAtom } from 'jotai'
 import { distanceAtom } from '../atoms'
 
 const ICONS = [
-  {
-    src: VenuePointIcon,
-    name: 'venue-icon'
-  },
-  {
-    src: UserPointIcon,
-    name: 'user-icon'
-  }
+  { src: VenuePointIcon, name: 'venue-icon' },
+  { src: UserPointIcon, name: 'user-icon' }
 ]
 
 const SOURCE_ID = 'source_points'
@@ -25,147 +19,19 @@ const LAYER_ID = 'layer_points'
 const DEFAULT_ZOOM = 10.12
 const DEFAULT_COORDS: LngLatLike = [24.92813512, 60.17012143]
 
+const MAP_PADDING = { left: 600, right: 100, top: 100, bottom: 100 }
+const MAX_ZOOM = 15
+const FLY_TO_ZOOM = 13
+
 export const useMap = () => {
   const map = useRef<mapboxgl.Map | null>(null)
-  const [features, setFeatures] = useState<Feature<Point>[] | []>([])
+
+  const [venuePoint, setVenuePoint] = useState<Feature<Point> | null>(null)
+  const [customerPoint, setCustomerPoint] = useState<Feature<Point> | null>(null)
+
   const [, setDistance] = useAtom(distanceAtom)
 
-  const addSource = useCallback(() => {
-    map.current!.addSource(SOURCE_ID, {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features }
-    })
-  }, [features])
-
-  const addImages = () => {
-    for (const { src, name } of ICONS) {
-      const customIcon = new Image(24, 24)
-      customIcon.src = src
-      customIcon.onload = () => map.current!.addImage(name, customIcon)
-    }
-  }
-
-  const addLayer = () => {
-    map.current!.addLayer({
-      id: LAYER_ID,
-      type: 'symbol',
-      source: SOURCE_ID,
-      layout: {
-        'icon-image': [
-          'match',
-          ['get', 'type'],
-          'user',
-          'user-icon',
-          'venue',
-          'venue-icon',
-          'user-icon'
-        ],
-        'icon-size': 1
-      }
-    })
-  }
-
-  const fitMapToBounds = useCallback(() => {
-    if (!map.current || features.length === 0) {
-      return
-    }
-
-    const coordinates = features
-      .filter(feature => feature.geometry.type === 'Point')
-      .map(feature => feature.geometry.coordinates)
-
-    if (coordinates.length === 1) {
-      return map.current.flyTo({
-        center: coordinates[0] as LngLatLike,
-        zoom: 13,
-        duration: 1000
-      })
-    }
-
-    const bounds: LngLatBoundsLike = coordinates.reduce(
-      (acc, coord) => {
-        acc[0][0] = Math.min(acc[0][0], coord[0]) // Min longitude
-        acc[0][1] = Math.min(acc[0][1], coord[1]) // Min latitude
-        acc[1][0] = Math.max(acc[1][0], coord[0]) // Max longitude
-        acc[1][1] = Math.max(acc[1][1], coord[1]) // Max latitude
-        return acc
-      },
-      [
-        [Infinity, Infinity], // Initial min
-        [-Infinity, -Infinity] // Initial max
-      ]
-    )
-
-    map.current.fitBounds(bounds, {
-      padding: {
-        // TODO: to consts
-        left: 600,
-        right: 100,
-        top: 100,
-        bottom: 100
-      },
-      maxZoom: 15,
-      duration: 1000
-    })
-  }, [features])
-
-  const addPoint = useCallback((coordinates: [number, number], type: 'user' | 'venue') => {
-    const point: Feature<Point> = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates
-      },
-      properties: {
-        id: String(new Date().getTime()),
-        type
-      }
-    }
-
-    setFeatures(prev => [...prev, point])
-  }, [])
-
-  const removePoint = useCallback(
-    (pointType: 'user' | 'venue') => {
-      setFeatures(prev => prev.filter(point => point.properties?.type !== pointType))
-      setDistance(null)
-    },
-    [setDistance]
-  )
-
-  const addVenue = useCallback(
-    (coordinates: [number, number]) => {
-      addPoint(coordinates, 'venue')
-    },
-    [addPoint]
-  )
-  const addUser = useCallback(
-    (coordinates: [number, number]) => {
-      addPoint(coordinates, 'user')
-    },
-    [addPoint]
-  )
-
-  const removeVenue = useCallback(() => removePoint('venue'), [removePoint])
-  const removeUser = useCallback(() => removePoint('user'), [removePoint])
-
-  useEffect(() => {
-    if (features.length > 1) {
-      const linestring: Feature<LineString> = {
-        type: 'Feature',
-        geometry: {
-          type: 'LineString',
-          coordinates: features.map(point => point.geometry.coordinates)
-        },
-        properties: {}
-      }
-
-      setDistance(Math.floor(length(linestring, { units: 'meters' })))
-    }
-  }, [features, setDistance])
-
-  useEffect(() => {
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY
+  const initializeMap = useCallback(() => {
     map.current = new mapboxgl.Map({
       container: 'map',
       center: DEFAULT_COORDS,
@@ -174,27 +40,119 @@ export const useMap = () => {
     })
 
     map.current.on('load', () => {
-      addSource()
-      addImages()
-      addLayer()
-    })
+      map.current?.addSource(SOURCE_ID, {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] }
+      })
 
-    return () => {
-      map.current?.remove()
+      ICONS.forEach(({ src, name }) => {
+        const img = new Image(24, 24)
+        img.src = src
+        img.onload = () => map.current?.addImage(name, img)
+      })
+
+      map.current?.addLayer({
+        id: LAYER_ID,
+        type: 'symbol',
+        source: SOURCE_ID,
+        layout: {
+          'icon-image': [
+            'match',
+            ['get', 'type'],
+            'user',
+            'user-icon',
+            'venue',
+            'venue-icon',
+            'user-icon'
+          ],
+          'icon-size': 1
+        }
+      })
+    })
+  }, [])
+
+  const fitMapToBounds = useCallback((features: Feature<Point>[]) => {
+    if (features.length === 0 || !map.current) return
+
+    const coordinates = features.map(f => f.geometry.coordinates)
+    if (coordinates.length === 1) {
+      map.current.flyTo({
+        center: coordinates[0] as [number, number],
+        zoom: FLY_TO_ZOOM,
+        duration: 1000
+      })
+    } else {
+      const bounds: LngLatBoundsLike = coordinates.reduce(
+        ([min, max], [lng, lat]) => [
+          [Math.min(min[0], lng), Math.min(min[1], lat)],
+          [Math.max(max[0], lng), Math.max(max[1], lat)]
+        ],
+        [
+          [Infinity, Infinity],
+          [-Infinity, -Infinity]
+        ]
+      )
+      map.current.fitBounds(bounds, { padding: MAP_PADDING, maxZoom: MAX_ZOOM, duration: 1000 })
     }
   }, [])
 
-  useEffect(() => {
-    const source = map.current?.getSource(SOURCE_ID)
-    if (source?.type === 'geojson') {
-      source.setData({
-        type: 'FeatureCollection',
-        features
-      })
+  const updateMapSource = useCallback(
+    (features: Feature<Point>[]) => {
+      const source = map.current?.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource | undefined
+      if (!source) return
 
-      fitMapToBounds()
+      if (features.length === 2) {
+        const line = {
+          type: 'Feature',
+          geometry: { type: 'LineString', coordinates: features.map(f => f.geometry.coordinates) },
+          properties: {}
+        } as Feature<LineString>
+
+        setDistance(Math.floor(length(line, { units: 'meters' })))
+      } else {
+        setDistance(null)
+      }
+
+      source.setData({ type: 'FeatureCollection', features })
+      fitMapToBounds(features)
+    },
+    [setDistance, fitMapToBounds]
+  )
+
+  const addPoint = useCallback((type: 'venue' | 'user', coordinates: [number, number]) => {
+    const point: Feature<Point> = {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates },
+      properties: { id: String(Date.now()), type }
     }
-  }, [features, fitMapToBounds])
+    return type === 'venue' ? setVenuePoint(point) : setCustomerPoint(point)
+  }, [])
 
-  return { addVenue, addUser, removeVenue, removeUser }
+  const removePoint = useCallback(
+    (type: 'venue' | 'user') => (type === 'venue' ? setVenuePoint(null) : setCustomerPoint(null)),
+    []
+  )
+
+  useEffect(() => {
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY
+    initializeMap()
+    return () => map.current?.remove()
+  }, [initializeMap])
+
+  useEffect(() => {
+    updateMapSource([venuePoint, customerPoint].filter(Boolean) as Feature<Point>[])
+  }, [venuePoint, customerPoint, updateMapSource])
+
+  const addVenue = useCallback((coords: [number, number]) => addPoint('venue', coords), [addPoint])
+  const addUser = useCallback((coords: [number, number]) => addPoint('user', coords), [addPoint])
+
+  const removeVenue = useCallback(() => removePoint('venue'), [removePoint])
+  const removeUser = useCallback(() => removePoint('user'), [removePoint])
+
+  return {
+    addVenue,
+    addUser,
+    removeVenue,
+    removeUser
+  }
 }
