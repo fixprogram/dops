@@ -1,15 +1,19 @@
 import { useAtom } from 'jotai'
 import { slugAtom, userCoordinatesAtom, cartAtom } from '../atoms'
 import { ChangeEvent, useMemo } from 'react'
-import { CityIcon } from '../components/ui/icons/city-icon'
-import { ShareLocationButton } from '../components/ShareLocationButton/ShareLocationButton'
-import { CartIcon } from '../components/ui/icons/cart-icon'
-import { LocationIcon } from '../components/ui/icons/location-icon'
+import { Icon } from '../components/ui/Icon/Icon'
+import { useShareLocation } from './useShareLocation'
+import { Button } from '../components/ui/button/button'
+import { Loader } from '../components/ui/Loader/Loader'
 
 export const useForm = () => {
   const [slug, setSlug] = useAtom(slugAtom)
   const [userCoordinates, setUserCoordinates] = useAtom(userCoordinatesAtom)
   const [cart, setCart] = useAtom(cartAtom)
+
+  const { handleShareLocation, isLoading } = useShareLocation(coords =>
+    setUserCoordinates({ value: coords.join(', ') })
+  )
 
   return useMemo(
     () => [
@@ -18,7 +22,7 @@ export const useForm = () => {
         value: slug.value,
         error: slug.error,
         label: 'Enter venue slug',
-        prefix: <CityIcon />,
+        prefix: <Icon name="city" color="secondary" />,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setSlug({ value: e.target.value })
       },
       {
@@ -26,7 +30,7 @@ export const useForm = () => {
         value: cart.value,
         error: cart.error,
         label: 'Enter cart value',
-        prefix: <CartIcon />,
+        prefix: <Icon name="cart" color="secondary" />,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           const regex = /^[0-9.]*$/
           if (!regex.test(e.target.value)) {
@@ -40,11 +44,11 @@ export const useForm = () => {
         value: userCoordinates.value,
         error: userCoordinates.error,
         label: 'Enter user longitude and latitude',
-        prefix: <LocationIcon />,
+        prefix: <Icon name="location" color="secondary" />,
         postfix: (
-          <ShareLocationButton
-            onSuccess={coords => setUserCoordinates({ value: coords.join(', ') })}
-          />
+          <Button onClick={handleShareLocation} disabled={isLoading} ariaLabel="Share location">
+            {isLoading ? <Loader /> : <Icon name="pin" />}
+          </Button>
         ),
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           const regex = /^[0-9., ]*$/
@@ -58,6 +62,15 @@ export const useForm = () => {
         }
       }
     ],
-    [cart, slug, userCoordinates, setUserCoordinates, setCart, setSlug]
+    [
+      cart,
+      slug,
+      userCoordinates,
+      setUserCoordinates,
+      setCart,
+      setSlug,
+      handleShareLocation,
+      isLoading
+    ]
   )
 }

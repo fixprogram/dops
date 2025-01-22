@@ -1,0 +1,11 @@
+.Button {
+  background: inherit;
+  border: none;
+  padding: 0;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
+.Button .Disabled {
+  cursor: default;
+}

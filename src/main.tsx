@@ -2,9 +2,17 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { IconsSprite } from './components/ui/IconsSprite/IconsSprite.tsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const client = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <QueryClientProvider client={client}>
+      <IconsSprite />
+
+      <App />
+    </QueryClientProvider>
   </StrictMode>
 )

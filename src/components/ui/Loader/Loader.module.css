@@ -1,17 +1,3 @@
-.Button {
-  background: inherit;
-  border: none;
-  padding: 0;
-  height: 1.5rem;
-}
-
-.Icon {
-  fill: #009de0;
-  width: 1.5rem;
-  height: 1.5rem;
-  cursor: pointer;
-}
-
 .LoadingIcon {
   height: 1.5rem;
   width: 1.5rem;

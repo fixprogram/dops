@@ -1,4 +1,4 @@
-import { act, render, renderHook } from '@testing-library/react'
+import { act, render, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, vi, it, beforeAll, afterEach, afterAll } from 'vitest'
 import { userEvent } from '@testing-library/user-event'
 import { DetailsForm } from './DetailsForm'
@@ -6,8 +6,14 @@ import { useAtom } from 'jotai'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { slugAtom, venueCoordinatesAtom, venueDataAtom } from '../../atoms'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactElement } from 'react'
 
 vi.mock('./useDebounce', () => ({ useDebounce: (value: string) => value }))
+
+const queryClient = new QueryClient()
+const renderWithClient = (children: ReactElement) =>
+  render(<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>)
 
 const server = setupServer()
 
@@ -32,7 +38,7 @@ const mockDynamicResponse = {
 
 describe('DetailsForm', () => {
   it('renders the DetailsForm with the correct structure', () => {
-    const { getByText, getByRole } = render(<DetailsForm />)
+    const { getByText, getByRole } = renderWithClient(<DetailsForm />)
 
     expect(getByRole('heading', { name: /details/i })).toBeInTheDocument()
     expect(getByText(/enter venue slug/i)).toBeInTheDocument()
@@ -45,7 +51,7 @@ describe('DetailsForm', () => {
       const input = 'test_slug'
       const user = userEvent.setup()
 
-      const { getByTestId } = render(<DetailsForm />)
+      const { getByTestId } = renderWithClient(<DetailsForm />)
 
       const venueSlugInput = getByTestId('slugValue')
       await act(async () => await user.type(venueSlugInput, input))
@@ -65,27 +71,28 @@ describe('DetailsForm', () => {
       )
 
       const user = userEvent.setup()
-      const { getByTestId } = render(<DetailsForm />)
+      const { getByTestId } = renderWithClient(<DetailsForm />)
       const venueSlugInput = getByTestId('slugValue')
 
       await act(async () => {
         await user.type(venueSlugInput, input)
-        await new Promise(resolve => setTimeout(resolve, 1000))
       })
 
-      const {
-        result: { current: venueData }
-      } = renderHook(() => useAtom(venueDataAtom))
-      const {
-        result: { current: venueCoordinates }
-      } = renderHook(() => useAtom(venueCoordinatesAtom))
+      await waitFor(async () => {
+        const {
+          result: { current: venueData }
+        } = renderHook(() => useAtom(venueDataAtom))
+        const {
+          result: { current: venueCoordinates }
+        } = renderHook(() => useAtom(venueCoordinatesAtom))
 
-      expect(venueData[0]).toEqual({
-        orderMinimumNoSurcharge: 10,
-        basePrice: 5,
-        distanceRanges: [{ min_distance: 0, price_per_km: 1 }]
+        expect(venueData[0]).toEqual({
+          orderMinimumNoSurcharge: 10,
+          basePrice: 5,
+          distanceRanges: [{ min_distance: 0, price_per_km: 1 }]
+        })
+        expect(venueCoordinates[0]).toEqual([10, 20])
       })
-      expect(venueCoordinates[0]).toEqual([10, 20])
     })
 
     it('sets error when static request fails', async () => {
@@ -93,7 +100,7 @@ describe('DetailsForm', () => {
 
       server.use(
         http.get(`${import.meta.env.VITE_VENUES_API}/${input}/static`, () => {
-          return HttpResponse.json({ message: 'Not found' })
+          return HttpResponse.json({ message: 'Not found' }, { status: 404 })
         }),
         http.get(`${import.meta.env.VITE_VENUES_API}/${input}/dynamic`, () => {
           return HttpResponse.json({})
@@ -102,7 +109,7 @@ describe('DetailsForm', () => {
 
       const user = userEvent.setup()
 
-      const { getByTestId, findByText } = render(<DetailsForm />)
+      const { getByTestId, findByText } = renderWithClient(<DetailsForm />)
       const venueSlugInput = getByTestId('slugValue')
 
       await act(async () => {
@@ -121,22 +128,27 @@ describe('DetailsForm', () => {
     it('sets error when dynamic request fails', async () => {
       const input = 'test_slug'
 
+      // The problem is that we don't return an error like real API does so we don't see the error message
       server.use(
         http.get(`${import.meta.env.VITE_VENUES_API}/${input}/static`, () => {
           return HttpResponse.json({ venue_raw: { location: { coordinates: [10, 20] } } })
         }),
         http.get(`${import.meta.env.VITE_VENUES_API}/${input}/dynamic`, () => {
-          return HttpResponse.json({ message: `No venue with slug of '${input}' was found` })
+          return HttpResponse.json(
+            { message: `No venue with slug of '${input}' was found` },
+            { status: 404 }
+          )
         })
       )
 
       const user = userEvent.setup()
-      const { getByTestId, findByText } = render(<DetailsForm />)
+      const { getByTestId, findByText } = renderWithClient(<DetailsForm />)
       const venueSlugInput = getByTestId('slugValue')
 
       await act(async () => {
         await user.type(venueSlugInput, input)
       })
+
       await findByText(/No venue with slug of 'test_slug' was found/i)
 
       const {
@@ -160,7 +172,7 @@ describe('DetailsForm', () => {
 
       const user = userEvent.setup()
 
-      const { getByTestId } = render(<DetailsForm />)
+      const { getByTestId } = renderWithClient(<DetailsForm />)
 
       const venueSlugInput = getByTestId('slugValue')
 

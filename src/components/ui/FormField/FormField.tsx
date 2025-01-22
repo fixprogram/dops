@@ -2,8 +2,7 @@ import { FC, InputHTMLAttributes, ReactNode } from 'react'
 import cn from 'classnames'
 import styles from './FormField.module.css'
 
-// TODO
-interface FormFieldType<T> extends InputHTMLAttributes<T> {
+interface FormFieldType<T> extends Omit<InputHTMLAttributes<T>, 'prefix' | 'postfix'> {
   label: string
   prefix?: ReactNode
   postfix?: ReactNode
@@ -17,6 +16,7 @@ export const FormField: FC<FormFieldType<unknown>> = ({
   prefix,
   postfix,
   type = 'text',
+  placeholder = ' ',
   error,
   testId,
   ...rest
@@ -30,7 +30,7 @@ export const FormField: FC<FormFieldType<unknown>> = ({
           data-testid={testId}
           type={type}
           className={cn(styles.Input, error ? styles.InputError : null)}
-          placeholder=" "
+          placeholder={placeholder}
           {...rest}
         />
         <label className={styles.Label}>{label}</label>

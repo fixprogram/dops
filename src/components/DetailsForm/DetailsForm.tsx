@@ -9,6 +9,7 @@ export const DetailsForm = () => {
 
   return (
     <section>
+      {/* TODO: use Title component */}
       <h3 className={styles.FormLegend}>Details</h3>
 
       <ul className={styles.FormList}>
