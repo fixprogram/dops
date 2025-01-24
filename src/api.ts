@@ -5,7 +5,7 @@ export interface DistantRangeType {
   b: number // Multiplier to be used for calculating distance based component of the delivery fee
 }
 
-interface VenueStaticResponseType {
+export interface VenueStaticResponseType {
   venue_raw: {
     location: {
       coordinates: [number, number]
@@ -13,7 +13,7 @@ interface VenueStaticResponseType {
   }
 }
 
-interface VenueDynamicResponseType {
+export interface VenueDynamicResponseType {
   venue_raw: {
     delivery_specs: {
       order_minimum_no_surcharge: number

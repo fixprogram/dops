@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai'
 import { useMap } from '../../hooks/useMap'
-import { Title } from '../ui/title/title'
-import styles from './map.module.css'
+import { Title } from '../ui/Title/Title'
+import styles from './ProjectMap.module.css'
 import { userCoordinatesAtom, venueCoordinatesAtom } from '../../atoms'
 import { useEffect } from 'react'
 import { useDebounce } from '../../hooks/useDebounce'
@@ -28,7 +28,7 @@ export const ProjectMap = () => {
       setUserCoordinates({
         value: delayedUserCoordinates,
         error:
-          'Please enter latitude and longitude in the format: latitude, longitude (e.g., 22.2937342, 60.4475285)'
+          'Please enter latitude and longitude in the format: latitude, longitude (e.g., 60.4475285, 22.2937342)'
       })
       return
     }

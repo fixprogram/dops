@@ -14,8 +14,8 @@ export const useShareLocation = (
       position => {
         clearTimeout(loadingTimeout)
         setIsLoading(false)
-        const { longitude, latitude } = position.coords
-        onSuccess([longitude, latitude])
+        const { latitude, longitude } = position.coords
+        onSuccess([latitude, longitude])
       },
       error => {
         clearTimeout(loadingTimeout)

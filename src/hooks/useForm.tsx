@@ -3,7 +3,7 @@ import { slugAtom, userCoordinatesAtom, cartAtom } from '../atoms'
 import { ChangeEvent, useMemo } from 'react'
 import { Icon } from '../components/ui/Icon/Icon'
 import { useShareLocation } from './useShareLocation'
-import { Button } from '../components/ui/button/button'
+import { Button } from '../components/ui/Button/Button'
 import { Loader } from '../components/ui/Loader/Loader'
 
 export const useForm = () => {
@@ -43,7 +43,7 @@ export const useForm = () => {
         key: 'userCoordinates',
         value: userCoordinates.value,
         error: userCoordinates.error,
-        label: 'Enter user longitude and latitude',
+        label: 'Enter user latitude and longitude',
         prefix: <Icon name="location" color="secondary" />,
         postfix: (
           <Button onClick={handleShareLocation} disabled={isLoading} ariaLabel="Share location">
@@ -55,7 +55,7 @@ export const useForm = () => {
           if (!regex.test(e.target.value)) {
             return setUserCoordinates({
               value: userCoordinates.value,
-              error: 'Only numbers or "." are allowed'
+              error: 'Only numbers, "," or "." are allowed'
             })
           }
           setUserCoordinates({ value: e.target.value })

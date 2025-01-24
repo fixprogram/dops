@@ -14,7 +14,7 @@ export const useTotal = () => {
   const deliveryFee = useMemo(() => {
     if (distance && venueData) {
       const range = venueData.distanceRanges.find(
-        ({ min, max }) => distance >= min && distance < max
+        ({ min, max }) => max !== 0 && distance >= min && distance < max
       )
 
       if (range) {
@@ -26,7 +26,7 @@ export const useTotal = () => {
   const deliveryError = useMemo(() => {
     if (distance && venueData) {
       const limit = venueData.distanceRanges.at(-1)!.min
-      if (distance > limit) {
+      if (distance >= limit) {
         return `Delivery is not possible: ${distance} meters is beyond our limit of ${limit} meters.`
       }
     }
