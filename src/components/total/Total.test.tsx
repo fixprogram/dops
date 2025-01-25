@@ -54,7 +54,7 @@ describe('Total', () => {
     renderWithClient(<Total />)
 
     expect(screen.getByText('Prices in EUR')).toBeInTheDocument()
-    expect(screen.getByText('Fill details form to see total')).toBeInTheDocument()
+    expect(screen.getByText('Fill order details to see total')).toBeInTheDocument()
     expect(screen.queryByText('Delivery')).not.toBeInTheDocument()
   })
 

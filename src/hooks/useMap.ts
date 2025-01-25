@@ -36,7 +36,13 @@ export const useMap = () => {
       container: 'map',
       center: DEFAULT_COORDS,
       zoom: DEFAULT_ZOOM,
-      style: 'mapbox://styles/mapbox/light-v11'
+      style: 'mapbox://styles/mapbox/light-v11',
+      projection: {
+        name: 'equirectangular'
+      },
+      logoPosition: 'top-right',
+      attributionControl: false,
+      cooperativeGestures: true
     })
 
     map.current.on('load', () => {

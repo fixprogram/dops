@@ -1,8 +1,10 @@
 import { FC } from 'react'
-import styles from './total.module.css'
 import { convertCentsToEuros } from '../../utils/convertCentsToEuros'
 import { Keys, useTotal } from '../../hooks/useTotal'
 import { Icon } from '../ui/Icon/Icon'
+import { Text } from '../ui/Text/Text'
+
+import styles from './total.module.scss'
 
 const titles: Record<Keys, string> = {
   deliveryFee: 'Delivery',
@@ -15,49 +17,43 @@ export const Total: FC = () => {
 
   return (
     <section className={styles.Total}>
-      <span className={styles.Title}>
+      <Text as="h2" type="subtitle">
         Prices in EUR
-        {!deliveryError ? (
-          <span className={styles.Subtitle}>Fill details form to see total</span>
-        ) : null}
-      </span>
+      </Text>
+      {!deliveryError ? <Text type="body-2">Fill order details to see total</Text> : null}
 
       {!deliveryError ? (
         <dl className={styles.Items}>
           {formattedData.map(({ key, value }) => (
             <div key={key} className={styles.Item}>
-              <dt className={styles.ItemTitle}>
+              <Text as="dt">
                 {titles[key]}
                 {key === 'deliveryFee' ? (
                   <span data-raw-value={distance}>{` (${distance} m)`}</span>
                 ) : null}
-              </dt>
-              <dd className={styles.ItemValue} data-raw-value={value}>
+              </Text>
+              <Text as="dd" data-raw-value={value}>
                 {convertCentsToEuros(value)}
-              </dd>
+              </Text>
             </div>
           ))}
 
           {total ? (
             <div key={'total'} className={styles.Item}>
-              <dt className={styles.ItemTitle} style={{ fontWeight: 700 }}>
-                Total
-              </dt>
-              <dd className={styles.ItemValue} style={{ fontWeight: 700 }} data-raw-value={total}>
+              <Text as="b">Total</Text>
+              <Text as="b" data-raw-value={total}>
                 {convertCentsToEuros(total)}
-              </dd>
+              </Text>
             </div>
           ) : null}
         </dl>
       ) : null}
 
       {deliveryError && (
-        <div>
-          <p className={styles.Error}>
-            <Icon name="error" className={styles.ErrorIcon} />
-            {deliveryError}
-          </p>
-        </div>
+        <Text color="error">
+          <Icon name="error" className={styles.ErrorIcon} />
+          {deliveryError}
+        </Text>
       )}
     </section>
   )

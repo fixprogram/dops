@@ -1,0 +1,45 @@
+.MapWrapper {
+  height: 320px;
+  position: relative;
+
+  .Map {
+    position: relative;
+    touch-action: pan-x pan-y;
+    background-color: #ededee;
+    height: 100%;
+    width: 100%;
+
+    &:hover {
+      touch-action: none;
+
+      ~ .Hero {
+        opacity: 0.3;
+      }
+    }
+  }
+
+  .Hero {
+    z-index: 500;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: opacity 0.15s ease-in-out;
+
+    &Inner {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 30px;
+      box-sizing: border-box;
+    }
+
+    &:hover .HeroInner {
+      opacity: 0.3;
+    }
+  }
+}

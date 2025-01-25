@@ -11,12 +11,12 @@
 }
 
 .LoadingIconBgPath {
-  stroke: #009de0;
+  stroke: var(--primary-color);
   stroke-opacity: 0.2;
 }
 
 .LoadingIconMainPath {
-  stroke: #009de0;
+  stroke: var(--primary-color);
   stroke-linecap: round;
   animation: 1.5s ease-in-out infinite mainPathKeyframes;
 }

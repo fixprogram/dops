@@ -1,6 +1,6 @@
 import { FC, InputHTMLAttributes, ReactNode } from 'react'
 import cn from 'classnames'
-import styles from './FormField.module.css'
+import styles from './FormField.module.scss'
 
 interface FormFieldType<T> extends Omit<InputHTMLAttributes<T>, 'prefix' | 'postfix'> {
   label: string
@@ -22,28 +22,21 @@ export const FormField: FC<FormFieldType<unknown>> = ({
   ...rest
 }) => {
   return (
-    <>
-      <div className={styles.Wrapper}>
-        {prefix && <div className={styles.Prefix}>{prefix}</div>}
+    <div className={styles.Wrapper}>
+      {prefix && <div className={styles.Prefix}>{prefix}</div>}
 
-        <input
-          data-testid={testId}
-          type={type}
-          className={cn(styles.Input, error ? styles.InputError : null)}
-          placeholder={placeholder}
-          {...rest}
-        />
-        <label className={styles.Label}>{label}</label>
+      <input
+        data-testid={testId}
+        type={type}
+        className={cn(styles.Input, { [styles.InputError]: Boolean(error) })}
+        placeholder={placeholder}
+        {...rest}
+      />
+      <label className={styles.Label}>{label}</label>
 
-        {postfix && <div className={styles.Postfix}>{postfix}</div>}
-      </div>
+      {postfix && <div className={styles.Postfix}>{postfix}</div>}
 
-      {error && (
-        <>
-          <hr className={styles.FormSeparator} />
-          <p className={styles.Error}>{error}</p>
-        </>
-      )}
-    </>
+      {error && <p className={styles.Error}>{error}</p>}
+    </div>
   )
 }

@@ -1,25 +1,16 @@
 import { FC } from 'react'
 import classNames from 'classnames'
 
-import styles from './Icon.module.css'
+import styles from './Icon.module.scss'
 
-type IconName = 'city' | 'cart' | 'location' | 'pin' | 'error'
-type IconColor = 'primary' | 'secondary'
-
-export const Icon: FC<{ name: IconName; className?: string; color?: IconColor }> = ({
-  name,
-  className,
-  color = 'primary'
-}) => {
-  return (
-    <svg
-      className={classNames(
-        styles.Icon,
-        color === 'primary' ? styles.IconPrimary : styles.IconSecondary,
-        className
-      )}
-    >
-      <use href={`#${name}`} />
-    </svg>
-  )
+interface IconPropsType {
+  name: 'city' | 'cart' | 'location' | 'pin' | 'error'
+  color?: 'primary' | 'secondary'
+  className?: string
 }
+
+export const Icon: FC<IconPropsType> = ({ name, className, color = 'primary' }) => (
+  <svg className={classNames(styles.Icon, styles[`Icon--${color}`], className)}>
+    <use href={`#${name}`} />
+  </svg>
+)

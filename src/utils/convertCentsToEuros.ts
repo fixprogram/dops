@@ -1,10 +1,8 @@
 export const convertCentsToEuros = (value: number) => {
-  if (value === 0) return '€0'
+  const totalCents = Math.round(value)
+  const euros = Math.floor(totalCents / 100)
 
-  const euros = Math.floor(value / 100)
-  const cents = value % 100
+  const cents = String(totalCents % 100).padStart(2, '0')
 
-  const formattedCents = cents < 10 ? `0${cents}` : cents.toFixed(0)
-
-  return `€${euros}.${formattedCents}`
+  return `€${euros}.${cents}`
 }

@@ -5,8 +5,11 @@ import { Icon } from '../components/ui/Icon/Icon'
 import { useShareLocation } from './useShareLocation'
 import { Button } from '../components/ui/Button/Button'
 import { Loader } from '../components/ui/Loader/Loader'
+import { useVenueData } from './useVenueData'
 
 export const useForm = () => {
+  useVenueData()
+
   const [slug, setSlug] = useAtom(slugAtom)
   const [userCoordinates, setUserCoordinates] = useAtom(userCoordinatesAtom)
   const [cart, setCart] = useAtom(cartAtom)

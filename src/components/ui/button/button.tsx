@@ -1,7 +1,6 @@
 import { ButtonHTMLAttributes, FC } from 'react'
-import classNames from 'classnames'
 
-import styles from './Button.module.css'
+import styles from './Button.module.scss'
 
 interface ButtonPropsType<T> extends ButtonHTMLAttributes<T> {
   ariaLabel: string
@@ -16,7 +15,7 @@ export const Button: FC<ButtonPropsType<unknown>> = ({
 }) => (
   <button
     type={type}
-    className={classNames(styles.Button, { [styles.Disabled]: disabled })}
+    className={styles.Button}
     onClick={onClick}
     aria-label={ariaLabel}
     disabled={disabled}

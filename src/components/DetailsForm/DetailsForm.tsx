@@ -1,20 +1,21 @@
-import styles from './DetailsForm.module.css'
 import { FormField } from '../ui/FormField/FormField'
-import { useVenueData } from '../../hooks/useVenueData'
 import { useForm } from '../../hooks/useForm'
+import { Text } from '../ui/Text/Text'
+
+import styles from './DetailsForm.module.scss'
 
 export const DetailsForm = () => {
-  useVenueData()
   const filters = useForm()
 
   return (
     <section>
-      {/* TODO: use Title component */}
-      <h3 className={styles.FormLegend}>Details</h3>
+      <Text as="h2" type="subtitle">
+        Details
+      </Text>
 
       <ul className={styles.FormList}>
         {filters.map(({ key, value, error, prefix, postfix, onChange, label }) => (
-          <li className={styles.FormItem} key={key} data-test-id={`${key}Value`}>
+          <li key={key} data-test-id={`${key}Value`}>
             <FormField
               testId={`${key}Value`}
               label={label}
@@ -25,6 +26,7 @@ export const DetailsForm = () => {
               error={error}
               required
             />
+            <hr className={styles.FormSeparator} />
           </li>
         ))}
       </ul>
