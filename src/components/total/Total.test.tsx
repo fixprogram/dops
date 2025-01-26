@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactElement } from 'react'
 import { cartAtom, distanceAtom, venueDataAtom } from '../../atoms'
 import { Total } from './Total'
-import { useTotal } from '../../hooks/useTotal'
+import { useTotal } from './useTotal'
 
 const mockUseAtom = (value: unknown) => [value, vi.fn()] as [unknown, never]
 

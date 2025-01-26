@@ -1,0 +1,8 @@
+.ShareLocationButton {
+  height: 1.5rem;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+}

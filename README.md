@@ -3,7 +3,4 @@ To ensure performance, I implemented debouncing for API calls and input validati
 
 // TODO:
 
-1. Add scss
-2. Refactor use venue data hook
 3. Check area labels and accessability
-4. Architecture fixes

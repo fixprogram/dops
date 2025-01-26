@@ -1,0 +1,1 @@
+export { UserCoordinatesInput } from './UserCoordinatesInput'

@@ -1,10 +1,10 @@
 import { FC } from 'react'
-import { convertCentsToEuros } from '../../utils/convertCentsToEuros'
-import { Keys, useTotal } from '../../hooks/useTotal'
-import { Icon } from '../ui/Icon/Icon'
-import { Text } from '../ui/Text/Text'
+import { Icon } from '@/shared/components/Icon'
+import { Text } from '@/shared/components/Text'
 
+import { Keys, useTotal } from './useTotal'
 import styles from './total.module.scss'
+import { convertCentsToEuros } from './Total.utils'
 
 const titles: Record<Keys, string> = {
   deliveryFee: 'Delivery',
@@ -17,10 +17,12 @@ export const Total: FC = () => {
 
   return (
     <section className={styles.Total}>
-      <Text as="h2" type="subtitle">
-        Prices in EUR
-      </Text>
-      {!deliveryError ? <Text type="body-2">Fill order details to see total</Text> : null}
+      <div>
+        <Text as="h2" type="title-3">
+          Prices in EUR
+        </Text>
+        {!deliveryError ? <Text type="body-2">Fill order details to see total</Text> : null}
+      </div>
 
       {!deliveryError ? (
         <dl className={styles.Items}>
@@ -40,8 +42,10 @@ export const Total: FC = () => {
 
           {total ? (
             <div key={'total'} className={styles.Item}>
-              <Text as="b">Total</Text>
-              <Text as="b" data-raw-value={total}>
+              <Text as="b" weight="semibold">
+                Total
+              </Text>
+              <Text as="b" weight="semibold" data-raw-value={total}>
                 {convertCentsToEuros(total)}
               </Text>
             </div>

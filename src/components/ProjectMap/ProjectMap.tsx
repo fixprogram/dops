@@ -1,13 +1,13 @@
 import { useAtom } from 'jotai'
-import { useMap } from '../../hooks/useMap'
-import { Text } from '../ui/Text/Text'
-import { userCoordinatesAtom, venueCoordinatesAtom } from '../../atoms'
 import { useEffect } from 'react'
-import { useDebounce } from '../../hooks/useDebounce'
-import { validateCoordinates } from '../../utils/validateCoordinates'
-import { parseCoordinates } from '../../utils/parseCoordinates'
+import { Text } from '@/shared/components/Text/Text'
+import { userCoordinatesAtom, venueCoordinatesAtom } from '@/atoms'
+import { useDebounce } from '@/shared/hooks/useDebounce'
+
+import { useMap } from './useMap'
 
 import styles from './ProjectMap.module.scss'
+import { parseCoordinates, validateCoordinates } from './ProjectMap.utils'
 
 export const ProjectMap = () => {
   const [venueCoordinates] = useAtom(venueCoordinatesAtom)
@@ -43,7 +43,7 @@ export const ProjectMap = () => {
 
       <div className={styles.Hero}>
         <div className={styles.HeroInner}>
-          <Text as="h1" type="title">
+          <Text as="h1" type="title-1">
             Delivery Order Price Calculator
           </Text>
         </div>

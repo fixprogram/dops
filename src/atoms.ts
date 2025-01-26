@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { DistantRangeType } from './api'
+import { DistantRangeType } from './components/DetailsForm/SlugInput/api'
 
 type InputField = {
   value: string

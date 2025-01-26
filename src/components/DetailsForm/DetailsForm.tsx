@@ -1,35 +1,29 @@
-import { FormField } from '../ui/FormField/FormField'
-import { useForm } from '../../hooks/useForm'
-import { Text } from '../ui/Text/Text'
+import { Text } from '@/shared/components/Text'
 
 import styles from './DetailsForm.module.scss'
+import { SlugInput } from './SlugInput'
+import { CartInput } from './CartInput'
+import { UserCoordinatesInput } from './UserCoordinatesInput'
 
-export const DetailsForm = () => {
-  const filters = useForm()
-
-  return (
-    <section>
-      <Text as="h2" type="subtitle">
-        Details
-      </Text>
-
-      <ul className={styles.FormList}>
-        {filters.map(({ key, value, error, prefix, postfix, onChange, label }) => (
-          <li key={key} data-test-id={`${key}Value`}>
-            <FormField
-              testId={`${key}Value`}
-              label={label}
-              value={value}
-              prefix={prefix}
-              onChange={onChange}
-              postfix={postfix}
-              error={error}
-              required
-            />
-            <hr className={styles.FormSeparator} />
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
+const componentMap = {
+  slug: <SlugInput />,
+  cart: <CartInput />,
+  userCoordinates: <UserCoordinatesInput />
 }
+
+export const DetailsForm = () => (
+  <section className={styles.DetailsForm}>
+    <Text as="h2" type="title-2">
+      Details
+    </Text>
+
+    <ul className={styles.FormList}>
+      {Object.keys(componentMap).map(key => (
+        <li key={key} data-test-id={`${key}Value`}>
+          {componentMap[key as keyof typeof componentMap]}
+          <hr className={styles.FormSeparator} />
+        </li>
+      ))}
+    </ul>
+  </section>
+)
