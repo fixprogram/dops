@@ -4,6 +4,7 @@ Desktop only
 
 ## How to run
 
+npm ci
 npm run (dev | build | test)
 
 ## Libraries choice
