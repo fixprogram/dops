@@ -6,9 +6,9 @@ import { FormField } from '@/shared/components/FormField'
 import { Icon } from '@/shared/components/Icon'
 import { Loader } from '@/shared/components/Loader'
 
-import { useVenueData } from './SlugInput.hook'
+import { useVenueData } from './VenueSlugInput.hook'
 
-export const SlugInput = () => {
+export const VenueSlugInput = () => {
   const { isLoading } = useVenueData()
   const [{ value, error }, setSlug] = useAtom(slugAtom)
 
@@ -25,7 +25,8 @@ export const SlugInput = () => {
       prefix={<Icon name="city" color="secondary" />}
       postfix={isLoading ? <Loader /> : null}
       onChange={handleChange}
-      testId="slugValue"
+      testId="venueSlug"
+      id="venueSlug"
     />
   )
 }

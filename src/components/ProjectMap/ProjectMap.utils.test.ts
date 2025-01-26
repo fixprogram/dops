@@ -34,13 +34,13 @@ describe('validateCoordinates', () => {
   })
 
   it('should return false for out-of-range latitude', () => {
-    const input = '91.0000, 13.4050' // Latitude > 90
+    const input = '91.0000, 13.4050'
     const output = validateCoordinates(input)
     expect(output).toBe(false)
   })
 
   it('should return false for out-of-range longitude', () => {
-    const input = '52.5200, 181.0000' // Longitude > 180
+    const input = '52.5200, 181.0000'
     const output = validateCoordinates(input)
     expect(output).toBe(false)
   })

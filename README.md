@@ -1,6 +1,13 @@
-I chose to automate the calculations and updates to improve the user experience by eliminating the need for manual button clicks.
-To ensure performance, I implemented debouncing for API calls and input validation to handle edge cases gracefully.
+I considered this a real project, so I chose to automate the calculations and updates to improve the UX.
 
-// TODO:
+Desktop only
 
-3. Check area labels and accessability
+## How to run
+
+npm run (dev | build | test)
+
+## Libraries choice
+
+- React Query for handing network requests and caching static data
+- Jotai for simplifying communication between components
+- mapbox + @turf/length for calculating the distance and providing better UX

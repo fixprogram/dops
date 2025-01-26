@@ -5,7 +5,7 @@ import styles from './Text.module.scss'
 
 interface TextPropsType {
   children: ReactNode
-  as?: 'h1' | 'h2' | 'p' | 'dt' | 'dd' | 'b' | 'label'
+  as?: 'h1' | 'h2' | 'p' | 'dt' | 'dd' | 'b' | 'span'
   type?: 'title-1' | 'title-2' | 'title-3' | 'body-1' | 'body-2'
   color?: 'secondary' | 'error'
   weight?: 'semibold' | 'regular'

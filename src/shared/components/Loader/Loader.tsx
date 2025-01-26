@@ -2,7 +2,7 @@ import styles from './Loader.module.scss'
 
 export const Loader = () => {
   return (
-    <svg viewBox="0 0 16 16" className={styles.LoadingIcon} data-testid="loading-spinner">
+    <svg viewBox="0 0 16 16" className={styles.LoadingIcon} data-test-id="loading-spinner">
       <circle
         className={styles.LoadingIconBgPath}
         cx="8"

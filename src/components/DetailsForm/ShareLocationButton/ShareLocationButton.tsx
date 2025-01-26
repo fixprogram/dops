@@ -13,6 +13,7 @@ export const ShareLocationButton = () => {
       onClick={handleShareLocation}
       aria-label={'Share location'}
       disabled={isLoading}
+      data-test-id={'getLocation'}
     >
       {isLoading ? <Loader /> : <Icon name="pin" />}
     </button>

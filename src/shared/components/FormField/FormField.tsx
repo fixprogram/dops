@@ -1,5 +1,6 @@
 import { FC, InputHTMLAttributes, ReactNode } from 'react'
-import cn from 'classnames'
+import classNames from 'classnames'
+
 import styles from './FormField.module.scss'
 import { Text } from '../Text/Text'
 
@@ -20,6 +21,7 @@ export const FormField: FC<FormFieldType<unknown>> = ({
   placeholder = ' ',
   error,
   testId,
+  id,
   ...rest
 }) => {
   return (
@@ -27,15 +29,19 @@ export const FormField: FC<FormFieldType<unknown>> = ({
       {prefix && <div className={styles.Prefix}>{prefix}</div>}
 
       <input
-        data-testid={testId}
+        data-test-id={testId}
         type={type}
-        className={cn(styles.Input, { [styles.InputError]: Boolean(error) })}
+        className={classNames(styles.Input, { [styles.InputError]: Boolean(error) })}
         placeholder={placeholder}
+        id={id}
         {...rest}
       />
-      <Text as="label" weight="regular" className={styles.Label}>
-        {label}
-      </Text>
+
+      <label className={styles.Label} htmlFor={id}>
+        <Text as="span" weight="regular">
+          {label}
+        </Text>
+      </label>
 
       {postfix && <div className={styles.Postfix}>{postfix}</div>}
 

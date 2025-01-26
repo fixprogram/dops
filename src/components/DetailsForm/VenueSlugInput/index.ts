@@ -1,0 +1,1 @@
+export { VenueSlugInput } from './VenueSlugInput'

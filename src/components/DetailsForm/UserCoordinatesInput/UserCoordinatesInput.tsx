@@ -29,10 +29,11 @@ export const UserCoordinatesInput = () => {
       label="Enter user latitude and longitude"
       value={value}
       error={error}
-      prefix={<Icon name="cart" color="secondary" />}
+      prefix={<Icon name="location" color="secondary" />}
       postfix={<ShareLocationButton />}
       onChange={handleChange}
       testId="userCoordinatesValue"
+      id="userCoordinatesValue"
     />
   )
 }

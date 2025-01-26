@@ -27,6 +27,7 @@ export const CartInput = () => {
       prefix={<Icon name="cart" color="secondary" />}
       onChange={handleChange}
       testId="cartValue"
+      id="cartValue"
     />
   )
 }

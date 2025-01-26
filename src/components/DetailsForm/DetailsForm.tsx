@@ -1,12 +1,12 @@
 import { Text } from '@/shared/components/Text'
 
 import styles from './DetailsForm.module.scss'
-import { SlugInput } from './SlugInput'
+import { VenueSlugInput } from './VenueSlugInput'
 import { CartInput } from './CartInput'
 import { UserCoordinatesInput } from './UserCoordinatesInput'
 
 const componentMap = {
-  slug: <SlugInput />,
+  slug: <VenueSlugInput />,
   cart: <CartInput />,
   userCoordinates: <UserCoordinatesInput />
 }
@@ -19,7 +19,7 @@ export const DetailsForm = () => (
 
     <ul className={styles.FormList}>
       {Object.keys(componentMap).map(key => (
-        <li key={key} data-test-id={`${key}Value`}>
+        <li key={key}>
           {componentMap[key as keyof typeof componentMap]}
           <hr className={styles.FormSeparator} />
         </li>

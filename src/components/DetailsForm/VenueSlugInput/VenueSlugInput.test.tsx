@@ -6,7 +6,7 @@ import { http, HttpResponse } from 'msw'
 import { act } from 'react'
 import { venueDataAtom, venueCoordinatesAtom, slugAtom } from '../../../atoms'
 import { DetailsForm } from '../DetailsForm'
-import { VenueDynamicResponseType, VenueStaticResponseType } from '../SlugInput/api'
+import { VenueDynamicResponseType, VenueStaticResponseType } from './api'
 import { setupServer } from 'msw/node'
 import { renderWithClient } from '@/shared/utils/testUtils'
 
@@ -44,7 +44,7 @@ describe('Venue slug input', () => {
 
     const { getByTestId } = renderWithClient(<DetailsForm />)
 
-    const venueSlugInput = getByTestId('slugValue')
+    const venueSlugInput = getByTestId('venueSlug')
     await act(async () => await user.type(venueSlugInput, input))
 
     expect(venueSlugInput).toHaveValue(input)
@@ -63,7 +63,7 @@ describe('Venue slug input', () => {
 
     const user = userEvent.setup()
     const { getByTestId } = renderWithClient(<DetailsForm />)
-    const venueSlugInput = getByTestId('slugValue')
+    const venueSlugInput = getByTestId('venueSlug')
 
     await act(async () => {
       await user.type(venueSlugInput, input)
@@ -101,7 +101,7 @@ describe('Venue slug input', () => {
     const user = userEvent.setup()
 
     const { getByTestId, findByText } = renderWithClient(<DetailsForm />)
-    const venueSlugInput = getByTestId('slugValue')
+    const venueSlugInput = getByTestId('venueSlug')
 
     await act(async () => {
       await user.type(venueSlugInput, input)
@@ -133,7 +133,7 @@ describe('Venue slug input', () => {
 
     const user = userEvent.setup()
     const { getByTestId, findByText } = renderWithClient(<DetailsForm />)
-    const venueSlugInput = getByTestId('slugValue')
+    const venueSlugInput = getByTestId('venueSlug')
 
     await act(async () => {
       await user.type(venueSlugInput, input)
@@ -164,7 +164,7 @@ describe('Venue slug input', () => {
 
     const { getByTestId } = renderWithClient(<DetailsForm />)
 
-    const venueSlugInput = getByTestId('slugValue')
+    const venueSlugInput = getByTestId('venueSlug')
 
     await act(async () => {
       await user.type(venueSlugInput, input)
