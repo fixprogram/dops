@@ -4,13 +4,13 @@ Desktop only
 
 ## How to run
 
-npm ci
+npm ci  
 npm run (dev | build | test)
 
 ## ENVs used
 
-VITE_MAPBOX_KEY=YOUR_MAPBOX_KEY
-VITE_VENUES_API=https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues
+VITE_MAPBOX_KEY=YOUR_MAPBOX_KEY  
+VITE_VENUES_API=https://consumer-api.development.dev.woltapi.com/home-assignment-api/v1/venues  
 
 ## Libraries choice
 
