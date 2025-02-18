@@ -1,8 +1,8 @@
 import { Provider } from 'jotai'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { Total } from '../Total/Total'
+import { Total } from '@/components/Total'
 import { DetailsForm } from '@/components/DetailsForm'
-import { ProjectMap } from '../ProjectMap/ProjectMap'
+import { ProjectMap } from '@/components/ProjectMap'
 import { IconsSprite } from '@/shared/components/IconsSprite'
 
 import styles from './App.module.scss'
