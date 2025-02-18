@@ -1,11 +1,18 @@
-I considered this a real project, so I chose to automate the calculations and updates to improve the UX.
+# DOPS
 
-Desktop only
+![App Preview](assets/preview.png)
 
-## How to run
+
+## How to run locally
 
 npm ci  
 npm run (dev | build | test)
+
+Valid slugs: 
+- home-assignment-venue-helsinki 
+- home-assignment-venue-tallinn 
+- 1 
+- 2 
 
 ## ENVs used
 
