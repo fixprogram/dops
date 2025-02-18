@@ -3,7 +3,7 @@ import { Icon } from '@/shared/components/Icon'
 import { Text } from '@/shared/components/Text'
 
 import { Keys, useTotal } from './useTotal'
-import styles from './total.module.scss'
+import styles from './Total.module.scss'
 import { convertCentsToEuros } from './Total.utils'
 
 const titles: Record<Keys, string> = {
